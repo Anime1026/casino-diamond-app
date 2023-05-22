@@ -165,6 +165,7 @@ const GameManager = () => {
           balance: 0
         }
       } as StoreObject);
+      setTotalBalance(0);
       toast.success('Balance Refunded');
     });
     return () => {
