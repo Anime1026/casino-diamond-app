@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
+import Modal from '../../components/Modal';
 import Input from '../../components/Input';
 import Diamond from '../../components/Diamond';
 import Profit from '../../components/Profit';
@@ -47,6 +48,7 @@ const GameManager = () => {
   const [lossAmount, setLossAmount] = useState<number>(0);
   const [sameInds, setSameInds] = useState([]);
   const [profitStatus, setProfitStatus] = useState<ProfitListObject[]>([]);
+  const [depositModalOpen, setDepositModalOpen] = useState<boolean>(false);
 
   const initializeDiamods = () => {
     let data: any = [];
@@ -57,6 +59,10 @@ const GameManager = () => {
   };
 
   const handleSumbit = async () => {
+    if (Number(totalBalance) - betAmount <= 0) {
+      setDepositModalOpen(true);
+      return;
+    }
     if (betWayAuto && autoPlay) {
       setAutoPlay(false);
       clearInterval(autoPlayInterval);
@@ -168,9 +174,20 @@ const GameManager = () => {
       setTotalBalance(0);
       toast.success('Balance Refunded');
     });
+    socket.on(`insufficient-${auth?.userid}`, async () => {
+      update({
+        auth: {
+          ...auth,
+          balance: 0
+        }
+      } as StoreObject);
+      setTotalBalance(0);
+      setDepositModalOpen(true);
+    });
     return () => {
       socket.off(`playBet-${auth?.userid}`);
       socket.off(`refund-${auth?.userid}`);
+      socket.off(`insufficient-${auth?.userid}`);
     };
     // eslint-disable-next-line
   }, [diamonds]);
@@ -334,187 +351,210 @@ const GameManager = () => {
   }, [score]);
 
   return (
-    <div className="game-management-layout">
-      <div>
-        <div className="game-management-header">
-          <button className="text-white hover:text-[#d5dceb] flex gap-[10px]" onClick={refund}>
-            <IconMenu icon="Back" size={30} />
-            <span>Refund</span>
-          </button>
-          <div className="balance-container">
-            <label>Balance</label>
-            <div className="balance">
-              <span>${totalBalance.toFixed(2)}</span>
+    <>
+      <div className="game-management-layout">
+        <div>
+          <div className="game-management-header">
+            <button className="text-white hover:text-[#d5dceb] flex gap-[10px]" onClick={refund}>
+              <IconMenu icon="Back" size={30} />
+              <span>Refund</span>
+            </button>
+            <div className="balance-container">
+              <label>Balance</label>
+              <div className="balance">
+                <span>${totalBalance.toFixed(2)}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="game-management-body">
-          <div className="game-controller">
-            <div className="game-play-way-tab">
-              <button className={!betWayAuto ? '_active' : ''} onClick={() => setBetWayAuto(false)}>
-                Manual
-              </button>
-              <button className={betWayAuto ? '_active' : ''} onClick={() => setBetWayAuto(true)}>
-                Auto
-              </button>
-            </div>
-            <div className={`game-setting-controller ${betWayAuto && 'flex-col-reverse slg:flex-col'}`}>
-              <div className="bet-amount">
-                <p>
-                  <label>Bet Amount</label>
-                  <label>${betAmount.toFixed(2)}</label>
-                </p>
-                <div className="bet-amount-form">
-                  <Input
-                    type="number"
-                    icon="Coin"
-                    min={0}
-                    value={betAmount}
-                    onChange={setBetAmount}
-                    disabled={autoPlay}
-                  />
-                  <div className="bet-amount-double-controller">
-                    <button onClick={decreaseAmount}>1/2</button>
-                    <button onClick={increaseAmount}>2x</button>
-                  </div>
-                </div>
-              </div>
-              {betWayAuto && (
-                <>
-                  <div className="bet-count">
-                    <label>Number of Bets</label>
-                    <Input
-                      type="number"
-                      icon="Infinity"
-                      min={0}
-                      disabled={autoPlay}
-                      value={betCount}
-                      onChange={setBetCount}
-                    />
-                  </div>
-                  <div className="on-win">
-                    <label>On Win</label>
-                    <div>
-                      <div className="px-[2px]">
-                        <button className={!onWin ? '_active' : ''} onClick={() => setOnWin(false)} disabled={autoPlay}>
-                          reset
-                        </button>
-                        <button className={onWin ? '_active' : ''} onClick={() => setOnWin(true)} disabled={autoPlay}>
-                          Increase by:
-                        </button>
-                      </div>
-                      <Input
-                        type="number"
-                        icon="Percent"
-                        min={0}
-                        disabled={autoPlay || !onWin}
-                        value={onWin ? winPercent : 0}
-                        onChange={setWinPercent}
-                      />
-                    </div>
-                  </div>
-                  <div className="on-loss">
-                    <label>On Loss</label>
-                    <div>
-                      <div className="px-[2px]">
-                        <button
-                          className={!onLoss ? '_active' : ''}
-                          onClick={() => setOnLoss(false)}
-                          disabled={autoPlay}
-                        >
-                          reset
-                        </button>
-                        <button className={onLoss ? '_active' : ''} onClick={() => setOnLoss(true)} disabled={autoPlay}>
-                          Increase by:
-                        </button>
-                      </div>
-                      <Input
-                        type="number"
-                        icon="Percent"
-                        min={0}
-                        disabled={autoPlay || !onLoss}
-                        value={onLoss ? lossPercent : 0}
-                        onChange={setLossPercent}
-                      />
-                    </div>
-                  </div>
-                  <div className="stop-profit">
-                    <p className="flex justify-between">
-                      <label>Stop on Profit</label>
-                      <label>$0.00</label>
-                    </p>
-                    <Input
-                      type="number"
-                      icon="Coin"
-                      min={0}
-                      disabled={autoPlay}
-                      value={winAmount}
-                      onChange={setWinAmount}
-                    />
-                  </div>
-                  <div className="stop-on-Loss">
-                    <p className="flex justify-between">
-                      <label>Stop on Loss</label>
-                      <label>$0.00</label>
-                    </p>
-                    <Input
-                      type="number"
-                      icon="Coin"
-                      min={0}
-                      disabled={autoPlay}
-                      value={lossAmount}
-                      onChange={setLossAmount}
-                    />
-                  </div>
-                </>
-              )}
-              <div className="play-bet-button">
-                <button onClick={handleSumbit} disabled={autoPlay ? false : isLoading}>
-                  {betWayAuto ? (
-                    autoPlay ? (
-                      'Stop Autobet'
-                    ) : (
-                      'Start Autobet'
-                    )
-                  ) : isLoading ? (
-                    <BeatLoader color="#013e01" size={10} />
-                  ) : (
-                    'Bet'
-                  )}
+          <div className="game-management-body">
+            <div className="game-controller">
+              <div className="game-play-way-tab">
+                <button className={!betWayAuto ? '_active' : ''} onClick={() => setBetWayAuto(false)}>
+                  Manual
+                </button>
+                <button className={betWayAuto ? '_active' : ''} onClick={() => setBetWayAuto(true)}>
+                  Auto
                 </button>
               </div>
-            </div>
-          </div>
-          <div className="game-play-ground">
-            <div className="profit-ground">
-              <div className="profit-calc-list">
-                <div className="hidden text-red text-green text-blue text-cyan text-pink text-purple text-yellow" />
-                {profitStatus.map((item: any, ind: number) => {
-                  return <Profit key={ind} label={item.label} status={item.status} />;
-                })}
-              </div>
-              <div className="hidden slg:block relative w-full pl-[20px]">
-                <Tooltip profit={(betAmount * score).toFixed(8)} score={score} />
-              </div>
-            </div>
-            <div className="diamond-ground">
-              <div className="diamonds-group">
-                {diamonds.map((item: any, ind) => {
-                  return (
-                    <Diamond
-                      key={ind}
-                      img={diamondList[item.ind]}
-                      active={item.active}
-                      shadow={diamonds.filter((item) => item.ind !== -1).length > 0}
+              <div className={`game-setting-controller ${betWayAuto && 'flex-col-reverse slg:flex-col'}`}>
+                <div className="bet-amount">
+                  <p>
+                    <label>Bet Amount</label>
+                    <label>${betAmount.toFixed(2)}</label>
+                  </p>
+                  <div className="bet-amount-form">
+                    <Input
+                      type="number"
+                      icon="Coin"
+                      min={0}
+                      value={betAmount}
+                      onChange={setBetAmount}
+                      disabled={autoPlay}
                     />
-                  );
-                })}
+                    <div className="bet-amount-double-controller">
+                      <button onClick={decreaseAmount}>1/2</button>
+                      <button onClick={increaseAmount}>2x</button>
+                    </div>
+                  </div>
+                </div>
+                {betWayAuto && (
+                  <>
+                    <div className="bet-count">
+                      <label>Number of Bets</label>
+                      <Input
+                        type="number"
+                        icon="Infinity"
+                        min={0}
+                        disabled={autoPlay}
+                        value={betCount}
+                        onChange={setBetCount}
+                      />
+                    </div>
+                    <div className="on-win">
+                      <label>On Win</label>
+                      <div>
+                        <div className="px-[2px]">
+                          <button
+                            className={!onWin ? '_active' : ''}
+                            onClick={() => setOnWin(false)}
+                            disabled={autoPlay}
+                          >
+                            reset
+                          </button>
+                          <button className={onWin ? '_active' : ''} onClick={() => setOnWin(true)} disabled={autoPlay}>
+                            Increase by:
+                          </button>
+                        </div>
+                        <Input
+                          type="number"
+                          icon="Percent"
+                          min={0}
+                          disabled={autoPlay || !onWin}
+                          value={onWin ? winPercent : 0}
+                          onChange={setWinPercent}
+                        />
+                      </div>
+                    </div>
+                    <div className="on-loss">
+                      <label>On Loss</label>
+                      <div>
+                        <div className="px-[2px]">
+                          <button
+                            className={!onLoss ? '_active' : ''}
+                            onClick={() => setOnLoss(false)}
+                            disabled={autoPlay}
+                          >
+                            reset
+                          </button>
+                          <button
+                            className={onLoss ? '_active' : ''}
+                            onClick={() => setOnLoss(true)}
+                            disabled={autoPlay}
+                          >
+                            Increase by:
+                          </button>
+                        </div>
+                        <Input
+                          type="number"
+                          icon="Percent"
+                          min={0}
+                          disabled={autoPlay || !onLoss}
+                          value={onLoss ? lossPercent : 0}
+                          onChange={setLossPercent}
+                        />
+                      </div>
+                    </div>
+                    <div className="stop-profit">
+                      <p className="flex justify-between">
+                        <label>Stop on Profit</label>
+                        <label>$0.00</label>
+                      </p>
+                      <Input
+                        type="number"
+                        icon="Coin"
+                        min={0}
+                        disabled={autoPlay}
+                        value={winAmount}
+                        onChange={setWinAmount}
+                      />
+                    </div>
+                    <div className="stop-on-Loss">
+                      <p className="flex justify-between">
+                        <label>Stop on Loss</label>
+                        <label>$0.00</label>
+                      </p>
+                      <Input
+                        type="number"
+                        icon="Coin"
+                        min={0}
+                        disabled={autoPlay}
+                        value={lossAmount}
+                        onChange={setLossAmount}
+                      />
+                    </div>
+                  </>
+                )}
+                <div className="play-bet-button">
+                  <button onClick={handleSumbit} disabled={autoPlay ? false : isLoading}>
+                    {betWayAuto ? (
+                      autoPlay ? (
+                        'Stop Autobet'
+                      ) : (
+                        'Start Autobet'
+                      )
+                    ) : isLoading ? (
+                      <BeatLoader color="#013e01" size={10} />
+                    ) : (
+                      'Bet'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="game-play-ground">
+              <div className="profit-ground">
+                <div className="profit-calc-list">
+                  <div className="hidden text-red text-green text-blue text-cyan text-pink text-purple text-yellow" />
+                  {profitStatus.map((item: any, ind: number) => {
+                    return <Profit key={ind} label={item.label} status={item.status} />;
+                  })}
+                </div>
+                <div className="hidden slg:block relative w-full pl-[20px]">
+                  <Tooltip profit={(betAmount * score).toFixed(8)} score={score} />
+                </div>
+              </div>
+              <div className="diamond-ground">
+                <div className="diamonds-group">
+                  {diamonds.map((item: any, ind) => {
+                    return (
+                      <Diamond
+                        key={ind}
+                        img={diamondList[item.ind]}
+                        active={item.active}
+                        shadow={diamonds.filter((item) => item.ind !== -1).length > 0}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <Modal open={depositModalOpen} setOpen={setDepositModalOpen}>
+        <div className="game-deposit-modal">
+          <div className="modal-close" onClick={() => setDepositModalOpen(false)}>
+            &times;
+          </div>
+          <div>
+            <p>Insufficient account balance</p>
+            <a href="http://annie.ihk.vipnps.vip/iGaming-web/#/pages/recharge/recharge">
+              http://annie.ihk.vipnps.vip/iGaming-web/#/pages/recharge/recharge
+            </a>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 

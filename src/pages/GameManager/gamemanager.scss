@@ -123,3 +123,32 @@
         }
     }
 }
+
+.game-deposit-modal {
+    width: 22em;
+    height: 10em;
+    background: #142237;
+    border-radius: 1.5em;
+    padding: 1.5em 1.2em;
+    box-shadow: 0 0 1.25em rgba(0,0,0,.5);
+    @apply text-[14px] 2xs:text-[20px] xs:text-[24px] sm:text-[28px];
+    .modal-close {
+      position: absolute;
+      right: 1.2em;
+      top: 1em;
+      color: white;
+      cursor: pointer;
+    }
+    > div:last-child {
+      @apply flex flex-col justify-center h-full gap-[20px];
+      p {
+        @apply text-center text-white text-[1em];
+      }
+      a {
+        @apply text-center text-[0.5em] text-green;
+        &:hover {
+          @apply underline;
+        }
+      }
+    }
+  }
