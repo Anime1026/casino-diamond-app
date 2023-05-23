@@ -33,7 +33,7 @@ const GameManager = () => {
   const token = new URLSearchParams(useLocation().search).get('cert');
 
   const [totalBalance, setTotalBalance] = useState(0);
-  const [betAmount, setBetAmount] = useState(1);
+  const [betAmount, setBetAmount] = useState(0);
   const [betWayAuto, setBetWayAuto] = useState(false);
   const [autoPlay, setAutoPlay] = useState(false);
   const [score, setScore] = useState(0);
@@ -380,7 +380,7 @@ const GameManager = () => {
                 <div className="bet-amount">
                   <p>
                     <label>Bet Amount</label>
-                    <label>${betAmount.toFixed(2)}</label>
+                    <label>${Number(betAmount).toFixed(2)}</label>
                   </p>
                   <div className="bet-amount-form">
                     <Input
@@ -467,7 +467,7 @@ const GameManager = () => {
                     <div className="stop-profit">
                       <p className="flex justify-between">
                         <label>Stop on Profit</label>
-                        <label>$0.00</label>
+                        <label>${Number(winAmount).toFixed(2)}</label>
                       </p>
                       <Input
                         type="number"
@@ -481,7 +481,7 @@ const GameManager = () => {
                     <div className="stop-on-Loss">
                       <p className="flex justify-between">
                         <label>Stop on Loss</label>
-                        <label>$0.00</label>
+                        <label>${Number(lossAmount).toFixed(2)}</label>
                       </p>
                       <Input
                         type="number"
