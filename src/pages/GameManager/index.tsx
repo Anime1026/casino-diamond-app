@@ -59,10 +59,6 @@ const GameManager = () => {
   };
 
   const handleSumbit = async () => {
-    if (Number(totalBalance) - betAmount <= 0) {
-      setDepositModalOpen(true);
-      return;
-    }
     if (betWayAuto && autoPlay) {
       setAutoPlay(false);
       clearInterval(autoPlayInterval);
@@ -135,6 +131,7 @@ const GameManager = () => {
 
   useEffect(() => {
     socket.on(`playBet-${auth?.userid}`, async (e: any) => {
+      console.log(e);
       let i = 0;
       let interval = setInterval(() => {
         let diamond = [...diamonds];
