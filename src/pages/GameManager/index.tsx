@@ -131,15 +131,14 @@ const GameManager = () => {
 
   useEffect(() => {
     socket.on(`playBet-${auth?.userid}`, async (e: any) => {
-      console.log(e);
       let i = 0;
       let interval = setInterval(() => {
         let diamond = [...diamonds];
         diamond[i].ind = e.diamonds[i];
         setDiamonds(diamond);
         i++;
-      }, 400);
-      await sleep(2000);
+      }, 500);
+      await sleep(2500);
       let diamond = [...diamonds];
       setSameInds(e.sameInds);
       e.sameInds
@@ -217,7 +216,7 @@ const GameManager = () => {
           userid: auth?.userid,
           betAmount
         });
-      }, 2500);
+      }, 4000);
     }
 
     return () => {
