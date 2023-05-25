@@ -392,7 +392,7 @@ const GameManager = () => {
                       icon="Coin"
                       min={0}
                       value={betAmount}
-                      onChange={(e: any) => setBetAmount(Number(e))}
+                      onChange={(e: any) => totalBalance - Number(e) >= 0 && setBetAmount(Number(e))}
                       disabled={autoPlay}
                     />
                     <div className="bet-amount-double-controller">
