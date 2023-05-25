@@ -131,6 +131,11 @@ const GameManager = () => {
 
   useEffect(() => {
     socket.on(`playBet-${auth?.userid}`, async (e: any) => {
+      if (!e.status) {
+        toast.error('Insufficient your balance');
+        setIsLoading(false);
+        return;
+      }
       let i = 0;
       let interval = setInterval(() => {
         let diamond = [...diamonds];
@@ -169,6 +174,9 @@ const GameManager = () => {
       } as StoreObject);
       setTotalBalance(0);
       toast.success('Balance Refunded');
+      setTimeout(() => {
+        window.location.href = 'http://annie.ihk.vipnps.vip/iGaming-web';
+      }, 1500);
     });
     socket.on(`insufficient-${auth?.userid}`, async () => {
       update({
@@ -384,7 +392,7 @@ const GameManager = () => {
                       icon="Coin"
                       min={0}
                       value={betAmount}
-                      onChange={setBetAmount}
+                      onChange={(e: any) => totalBalance - Number(e) >= 0 && setBetAmount(Number(e))}
                       disabled={autoPlay}
                     />
                     <div className="bet-amount-double-controller">
