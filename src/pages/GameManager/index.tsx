@@ -131,11 +131,6 @@ const GameManager = () => {
 
   useEffect(() => {
     socket.on(`playBet-${auth?.userid}`, async (e: any) => {
-      if (!e.status) {
-        toast.error('Insufficient your balance');
-        setIsLoading(false);
-        return;
-      }
       let i = 0;
       let interval = setInterval(() => {
         let diamond = [...diamonds];
@@ -188,10 +183,15 @@ const GameManager = () => {
       setTotalBalance(0);
       setDepositModalOpen(true);
     });
+    socket.on(`error-${auth?.userid}`, async (e) => {
+      toast.error(e);
+      setIsLoading(false);
+    });
     return () => {
       socket.off(`playBet-${auth?.userid}`);
       socket.off(`refund-${auth?.userid}`);
       socket.off(`insufficient-${auth?.userid}`);
+      socket.off(`error-${auth?.userid}`);
     };
     // eslint-disable-next-line
   }, [diamonds]);
@@ -392,7 +392,7 @@ const GameManager = () => {
                       icon="Coin"
                       min={0}
                       value={betAmount}
-                      onChange={(e: any) => totalBalance - Number(e) >= 0 && setBetAmount(Number(e))}
+                      onChange={(e: any) => setBetAmount(Number(e))}
                       disabled={autoPlay}
                     />
                     <div className="bet-amount-double-controller">
