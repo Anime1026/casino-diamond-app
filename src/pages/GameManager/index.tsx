@@ -59,6 +59,9 @@ const GameManager = () => {
   };
 
   const handleSumbit = async () => {
+    if (betAmount === 0) {
+      toast.error("Insufficient your balance");
+    }
     if (betWayAuto && autoPlay) {
       setAutoPlay(false);
       clearInterval(autoPlayInterval);
