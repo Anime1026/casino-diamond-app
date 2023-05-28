@@ -33,7 +33,7 @@ const GameManager = () => {
   const token = new URLSearchParams(useLocation().search).get('cert');
 
   const [totalBalance, setTotalBalance] = useState(0);
-  const [betAmount, setBetAmount] = useState(0);
+  const [betAmount, setBetAmount] = useState(1000);
   const [betWayAuto, setBetWayAuto] = useState(false);
   const [autoPlay, setAutoPlay] = useState(false);
   const [score, setScore] = useState(0);
