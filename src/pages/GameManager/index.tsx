@@ -161,6 +161,15 @@ const GameManager = () => {
       setTotalBalance(e.balance);
       clearInterval(interval);
       setScore(e.score);
+      if (e.score > 0.1) {
+        if (onWin && winPercent > 0) {
+          setBetAmount((prev)=> prev + prev * winPercent / 100);
+        }
+      } else {
+        if (onLoss && lossPercent > 0) {
+          setBetAmount((prev)=> prev + prev * lossPercent / 100);
+        }
+      }
       setIsLoading(false);
     });
     socket.on(`refund-${auth?.userid}`, async (e: any) => {
@@ -202,14 +211,9 @@ const GameManager = () => {
   useEffect(() => {
     if (autoPlay && betWayAuto) {
       if (
+        (totalBalance - betAmount < 0) ||
         (winAmount > 0 && totalBalance > beforeBetBalance && totalBalance - beforeBetBalance >= winAmount) ||
         (lossAmount > 0 && beforeBetBalance > totalBalance && beforeBetBalance - totalBalance >= lossAmount) ||
-        (winPercent > 0 &&
-          totalBalance > beforeBetBalance &&
-          totalBalance - beforeBetBalance >= beforeBetBalance * winPercent) ||
-        (lossPercent > 0 &&
-          beforeBetBalance > totalBalance &&
-          beforeBetBalance - totalBalance >= beforeBetBalance * lossPercent) ||
         (playCount > 0 && betCount <= 0)
       ) {
         setAutoPlay(false);
@@ -234,7 +238,7 @@ const GameManager = () => {
       clearInterval(autoPlayInterval);
     };
     // eslint-disable-next-line
-  }, [autoPlay, totalBalance, betCount]);
+  }, [autoPlay, totalBalance, betCount, score]);
 
   useEffect(() => {
     initializeDiamods();
