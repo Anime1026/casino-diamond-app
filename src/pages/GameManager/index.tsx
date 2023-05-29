@@ -373,7 +373,7 @@ const GameManager = () => {
             <div className="balance-container">
               <label>Balance</label>
               <div className="balance">
-                <span>${totalBalance.toFixed(2)}</span>
+                <span>₹{totalBalance.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -391,7 +391,7 @@ const GameManager = () => {
                 <div className="bet-amount">
                   <p>
                     <label>Bet Amount</label>
-                    <label>${Number(betAmount).toFixed(2)}</label>
+                    <label>₹{Number(betAmount).toFixed(2)}</label>
                   </p>
                   <div className="bet-amount-form">
                     <Input
@@ -478,7 +478,7 @@ const GameManager = () => {
                     <div className="stop-profit">
                       <p className="flex justify-between">
                         <label>Stop on Profit</label>
-                        <label>${Number(winAmount).toFixed(2)}</label>
+                        <label>₹{Number(winAmount).toFixed(2)}</label>
                       </p>
                       <Input
                         type="number"
@@ -492,7 +492,7 @@ const GameManager = () => {
                     <div className="stop-on-Loss">
                       <p className="flex justify-between">
                         <label>Stop on Loss</label>
-                        <label>${Number(lossAmount).toFixed(2)}</label>
+                        <label>₹{Number(lossAmount).toFixed(2)}</label>
                       </p>
                       <Input
                         type="number"
