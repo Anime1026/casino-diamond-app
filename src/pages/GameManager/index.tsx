@@ -82,7 +82,7 @@ const GameManager = () => {
         }
         socket.emit('playBet', {
           userid: auth?.userid,
-          betAmount
+          betAmount: betAmount * 100
         });
       }
     }
@@ -229,7 +229,7 @@ const GameManager = () => {
         setIsLoading(true);
         socket.emit('playBet', {
           userid: auth?.userid,
-          betAmount
+          betAmount: betAmount * 100
         });
       }, 4000);
     }
@@ -373,7 +373,7 @@ const GameManager = () => {
             <div className="balance-container">
               <label>Balance</label>
               <div className="balance">
-                <span>₹{totalBalance.toFixed(2)}</span>
+                <span>₹{(totalBalance / 100).toFixed(2)}</span>
               </div>
             </div>
           </div>
