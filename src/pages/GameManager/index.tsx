@@ -105,7 +105,12 @@ const GameManager = () => {
   };
 
   const refund = () => {
-    socket.emit('refund', { userid: auth?.userid });
+    if (!isLoading) {
+      setIsLoading(true);
+      socket.emit('refund', { userid: auth?.userid });
+    } else {
+      toast.error('Refund is loading...')
+    }
   };
 
   useEffect(() => {
@@ -182,6 +187,7 @@ const GameManager = () => {
       setTotalBalance(0);
       toast.success('Balance Refunded');
       setTimeout(() => {
+        setIsLoading(false);
         window.location.href = 'http://annie.ihk.vipnps.vip/iGaming-web';
       }, 1500);
     });
