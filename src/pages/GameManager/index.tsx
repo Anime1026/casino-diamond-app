@@ -60,7 +60,7 @@ const GameManager = () => {
 
   const handleSumbit = async () => {
     if (betAmount === 0) {
-      toast.error("Insufficient your bet amount");
+      toast.error('Insufficient your bet amount');
     }
     if (betWayAuto && autoPlay) {
       setAutoPlay(false);
@@ -109,7 +109,7 @@ const GameManager = () => {
       setIsLoading(true);
       socket.emit('refund', { userid: auth?.userid });
     } else {
-      toast.error('Refund is loading...')
+      toast.error('Refund is loading...');
     }
   };
 
@@ -168,11 +168,11 @@ const GameManager = () => {
       setScore(e.score);
       if (e.score > 0.1) {
         if (onWin && winPercent > 0) {
-          setBetAmount((prev)=> prev + prev * winPercent / 100);
+          setBetAmount((prev) => prev + (prev * winPercent) / 100);
         }
       } else {
         if (onLoss && lossPercent > 0) {
-          setBetAmount((prev)=> prev + prev * lossPercent / 100);
+          setBetAmount((prev) => prev + (prev * lossPercent) / 100);
         }
       }
       setIsLoading(false);
@@ -217,7 +217,7 @@ const GameManager = () => {
   useEffect(() => {
     if (autoPlay && betWayAuto) {
       if (
-        (totalBalance - betAmount < 0) ||
+        totalBalance - betAmount < 0 ||
         (winAmount > 0 && totalBalance > beforeBetBalance && totalBalance - beforeBetBalance >= winAmount) ||
         (lossAmount > 0 && beforeBetBalance > totalBalance && beforeBetBalance - totalBalance >= lossAmount) ||
         (playCount > 0 && betCount <= 0)
@@ -403,7 +403,8 @@ const GameManager = () => {
                     <Input
                       type="number"
                       icon="Coin"
-                      min={0}
+                      min={config.minBetAmount}
+                      max={config.maxBetAmount}
                       value={betAmount}
                       onChange={(e: any) => totalBalance - Number(e) >= 0 && setBetAmount(Number(e))}
                       disabled={autoPlay}
