@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import IconMenu from '../../components/Icons';
 import './input.scss';
 
@@ -14,6 +14,14 @@ interface IProps {
 }
 
 const Input = (props: IProps) => {
+
+  useEffect(()=>{
+    if(props.value < 0) {
+      props.onChange(props.min);
+    }
+    // eslint-disable-next-line
+  }, [props.value])
+
   return (
     <div className="input-box">
       <input
