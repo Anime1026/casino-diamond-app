@@ -374,7 +374,7 @@ const GameManager = () => {
           <div className="game-management-header">
             <button className="text-white hover:text-[#d5dceb] flex gap-[10px]" onClick={refund}>
               <IconMenu icon="Back" size={30} />
-              <span>Refund</span>
+              <span>Reback</span>
             </button>
             <div className="balance-container">
               <label>Balance</label>
