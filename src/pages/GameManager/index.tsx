@@ -188,7 +188,7 @@ const GameManager = () => {
       toast.success('Balance Refunded');
       setTimeout(() => {
         setIsLoading(false);
-        window.location.href = 'http://annie.ihk.vipnps.vip/iGaming-web';
+        window.location.href = 'https://induswin.com/#/';
       }, 1500);
     });
     socket.on(`insufficient-${auth?.userid}`, async () => {
