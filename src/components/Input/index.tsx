@@ -14,20 +14,17 @@ interface IProps {
 }
 
 const Input = (props: IProps) => {
-
-  useEffect(()=>{
-    if(props.value < 0) {
-      props.onChange(props.min);
-    }
-    // eslint-disable-next-line
-  }, [props.value])
+  const [mybetAmount, setMybetAmount] = React.useState(0);
+  useEffect(() => {
+    setMybetAmount(props.value);
+  }, [props.value]);
 
   return (
     <div className="input-box">
       <input
         type={props.type}
         readOnly={props.readOnly}
-        value={props.value}
+        value={mybetAmount}
         min={props.min}
         max={props.max}
         onChange={(e: any) => props.onChange(e.target.value)}

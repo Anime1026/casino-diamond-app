@@ -216,10 +216,13 @@ const GameManager = () => {
 
   useEffect(() => {
     if (autoPlay && betWayAuto) {
+      console.log('winAmount', totalBalance - beforeBetBalance, winAmount);
+
+      console.log('lossAmount', beforeBetBalance - totalBalance, lossAmount);
       if (
         totalBalance - betAmount < 0 ||
-        (winAmount > 0 && totalBalance > beforeBetBalance && totalBalance - beforeBetBalance >= winAmount) ||
-        (lossAmount > 0 && beforeBetBalance > totalBalance && beforeBetBalance - totalBalance >= lossAmount) ||
+        (winAmount > 0 && totalBalance > beforeBetBalance && (totalBalance - beforeBetBalance) / 100 >= winAmount) ||
+        (lossAmount > 0 && beforeBetBalance > totalBalance && (beforeBetBalance - totalBalance) / 100 >= lossAmount) ||
         (playCount > 0 && betCount <= 0)
       ) {
         setAutoPlay(false);
