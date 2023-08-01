@@ -380,7 +380,7 @@ const GameManager = () => {
               <span>Reback</span>
             </button>
             <div className="balance-container">
-              <label>Balance</label>
+              <label className='mobile-balance'>Balance</label>
               <div className="balance">
                 <span>₹{(totalBalance / 100).toFixed(2)}</span>
               </div>
