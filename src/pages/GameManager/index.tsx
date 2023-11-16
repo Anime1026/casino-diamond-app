@@ -82,7 +82,7 @@ const GameManager = () => {
         }
         socket.emit('playBet', {
           userid: auth?.userid,
-          betAmount: betAmount * 100
+          betAmount: betAmount
         });
       }
     }
@@ -118,6 +118,7 @@ const GameManager = () => {
     socket.emit('join', { token });
     socket.on(`join-${token}`, (e: any) => {
       initializeDiamods();
+      console.log("User Balance = ", e.balance);
       update({
         auth: {
           userid: e.userid,
@@ -238,7 +239,7 @@ const GameManager = () => {
         setIsLoading(true);
         socket.emit('playBet', {
           userid: auth?.userid,
-          betAmount: betAmount * 100
+          betAmount: betAmount
         });
       }, 4000);
     }
