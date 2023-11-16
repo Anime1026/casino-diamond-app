@@ -31,7 +31,6 @@ const GameManager = () => {
   const { auth, update } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const token = new URLSearchParams(useLocation().search).get('cert');
-
   const [totalBalance, setTotalBalance] = useState(0);
   const [betAmount, setBetAmount] = useState(10);
   const [betWayAuto, setBetWayAuto] = useState(false);
@@ -168,11 +167,11 @@ const GameManager = () => {
       setScore(e.score);
       if (e.score > 0.1) {
         if (onWin && winPercent > 0) {
-          setBetAmount((prev) => prev + (prev * winPercent) / 100);
+          setBetAmount((prev) => prev + (prev * winPercent));
         }
       } else {
         if (onLoss && lossPercent > 0) {
-          setBetAmount((prev) => prev + (prev * lossPercent) / 100);
+          setBetAmount((prev) => prev + (prev * lossPercent));
         }
       }
       setIsLoading(false);
@@ -221,8 +220,8 @@ const GameManager = () => {
       console.log('lossAmount', beforeBetBalance - totalBalance, lossAmount);
       if (
         totalBalance - betAmount < 0 ||
-        (winAmount > 0 && totalBalance > beforeBetBalance && (totalBalance - beforeBetBalance) / 100 >= winAmount) ||
-        (lossAmount > 0 && beforeBetBalance > totalBalance && (beforeBetBalance - totalBalance) / 100 >= lossAmount) ||
+        (winAmount > 0 && totalBalance > beforeBetBalance && (totalBalance - beforeBetBalance) >= winAmount) ||
+        (lossAmount > 0 && beforeBetBalance > totalBalance && (beforeBetBalance - totalBalance) >= lossAmount) ||
         (playCount > 0 && betCount <= 0)
       ) {
         setAutoPlay(false);
@@ -269,11 +268,11 @@ const GameManager = () => {
           diamond: (i === 4 && j > 1 && j < 4) || (i === 2 && j > 2 && j < 5) ? 'Diamond2' : 'Diamond1',
           color:
             (j < 2 && i < 6) ||
-            (i < 4 && j < 3) ||
-            (i < 2 && j < 4) ||
-            (i < 1 && j < 5) ||
-            (i === 4 && j > 1 && j < 4) ||
-            (i === 2 && j > 2 && j < 5)
+              (i < 4 && j < 3) ||
+              (i < 2 && j < 4) ||
+              (i < 1 && j < 5) ||
+              (i === 4 && j > 1 && j < 4) ||
+              (i === 2 && j > 2 && j < 5)
               ? 'text-[#3f515f]'
               : 'text-[#0e1d27]'
         } as ProfitStatusObject;
@@ -291,11 +290,11 @@ const GameManager = () => {
           diamond: (i === 4 && j > 1 && j < 4) || (i === 2 && j > 2 && j < 5) ? 'Diamond2' : 'Diamond1',
           color:
             (j < 2 && i < 6) ||
-            (i < 4 && j < 3) ||
-            (i < 2 && j < 4) ||
-            (i < 1 && j < 5) ||
-            (i === 4 && j > 1 && j < 4) ||
-            (i === 2 && j > 2 && j < 5)
+              (i < 4 && j < 3) ||
+              (i < 2 && j < 4) ||
+              (i < 1 && j < 5) ||
+              (i === 4 && j > 1 && j < 4) ||
+              (i === 2 && j > 2 && j < 5)
               ? 'text-[#3f515f]'
               : 'text-[#0e1d27]'
         } as ProfitStatusObject;
@@ -375,14 +374,14 @@ const GameManager = () => {
       <div className="game-management-layout">
         <div>
           <div className="game-management-header">
-            <button className="text-white hover:text-[#d5dceb] flex gap-[10px]" onClick={refund}>
+            {/* <button className="text-white hover:text-[#d5dceb] flex gap-[10px]" onClick={refund}>
               <IconMenu icon="Back" size={30} />
               <span>Reback</span>
-            </button>
+            </button> */}
             <div className="balance-container">
               <label className='mobile-balance'>Balance</label>
               <div className="balance">
-                <span>₹{(totalBalance / 100).toFixed(2)}</span>
+                <span>₹{(totalBalance).toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -562,7 +561,7 @@ const GameManager = () => {
           </div>
         </div>
       </div>
-      <Modal open={depositModalOpen} setOpen={setDepositModalOpen}>
+      {/* <Modal open={depositModalOpen} setOpen={setDepositModalOpen}>
         <div className="game-deposit-modal">
           <div className="modal-close" onClick={() => setDepositModalOpen(false)}>
             &times;
@@ -574,7 +573,7 @@ const GameManager = () => {
             </a>
           </div>
         </div>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
