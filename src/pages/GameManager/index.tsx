@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
@@ -28,9 +28,10 @@ const profitCalcList: ProfitListObject[] = [
 ];
 const socket = io(config.wwsHost as string);
 const GameManager = () => {
+  const [searchParams] = useSearchParams();
   const { auth, update } = useStore();
   const [isLoading, setIsLoading] = useState(false);
-  const token = new URLSearchParams(useLocation().search).get('cert');
+  let token = searchParams.get('cert');
   const [totalBalance, setTotalBalance] = useState(0);
   const [betAmount, setBetAmount] = useState(10);
   const [betWayAuto, setBetWayAuto] = useState(false);
